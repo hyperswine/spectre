@@ -1,2 +1,3 @@
-# spectro-rei
-Spectro emulator in rei 
+# Spectro
+
+Spectro emulator in rei.
