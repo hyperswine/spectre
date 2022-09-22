@@ -5,6 +5,5 @@
 // Arcen is very flexible. You can embed a gui as a module and make that your local root
 // for arcen to find pages, components and assets
 
-export fn Index() {
+// NOTE: Page is literally type Page = Component
 
-}
