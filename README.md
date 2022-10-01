@@ -1,3 +1,3 @@
 # Spectro
 
-Spectro emulator in rei.
+Spectro design and emulator in rei.

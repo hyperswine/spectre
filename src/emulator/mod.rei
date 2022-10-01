@@ -18,13 +18,13 @@ use Rust::aarch64
 @derive(Default)
 Functionality: ()
 
-impl Functionality {
+Functionality: impl {
     // the new snippet can generate this
-    fn new() -> Self {
+    new: () -> Self {
         ()
     }
 
-    fn execute_program(hardware_program: HardwareProgram) {
+    execute_program: (hardware_program: HardwareProgram) {
         // interpret the program in your own ISA/ucode
     }
 }
@@ -49,7 +49,7 @@ HardwareSpec: {
     }
 }
 
-export fn start_aarch64(hardware_spec: HardwareSpec) -> Status {
+export start_aarch64: (hardware_spec: HardwareSpec) -> Status {
     // microarch independent bios
 
     // maybe get the core topology and etc and hardware topology
@@ -59,7 +59,7 @@ export fn start_aarch64(hardware_spec: HardwareSpec) -> Status {
     // execute a program, and hand off execution to it
 }
 
-fn evaluate<T>(instruction: Instruction) -> T {
+evaluate[T]: (instruction: Instruction) -> T {
     // shorthand for config arch aarch64
     @cfg(aarch64)
     return aarch64::evaluate(instruction)
@@ -68,7 +68,7 @@ fn evaluate<T>(instruction: Instruction) -> T {
 }
 
 // Execution loop
-fn execute(program: Program) {
+execute: (program: Program) {
     while let Ok(instruction) = program.next() {
         match instruction {
             evaluate(instruction)

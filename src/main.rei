@@ -2,7 +2,7 @@
 
 use std::cli::Flag
 
-fn main(cli_mode: Flag) -> Status {
+main: (cli_mode: Flag) -> Status {
     if cli_mode {
         // launch interactive prompt
         interactive_prompt()
