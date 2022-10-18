@@ -1,6 +1,6 @@
-name = "spectro"
+name = "spectre"
 author = "Jasen Qin"
-description = "Spectro Emulator"
+description = "Spectre Emulator"
 license = "GPL-2.1"
 
 rei = "2022-v1"
