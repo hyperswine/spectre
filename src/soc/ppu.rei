@@ -107,15 +107,51 @@ Queue: (wavefront: Wavefront) -> Wavefront {
     queue.pop()
 }
 
+// by applying this pattern, spectro figures out what should be state and what shouldnt be state
+// pretty much automatically. Just write the logic itself in the most direct manner
+
+// NOTE: all spectro objects have a free()? or we can impl it ourselves?
+
 // get wavefront from dispatcher and queue
 ShaderCluster: (wavefront: Wavefront) {
     // queues and shader processors
     let next = Queue(wavefront)
 
-    // 
+    // send to a free shader processor?
+    // S processors available
+    const shader_processors = [ShaderProcessor; S]
+    let free_processor = shader_processors.find(s => s.free())
+
+    // call it
+    free_processor(wavefront)
 }
 
-ShaderProcessor: () {}
+ShaderProcessor: extend {
+    free: (&self) -> bool {}
+}
+
+ShaderProcessor: (wavefront: Wavefront) {
+    // now we can decode it
+    wavefront.for_each(inst => match inst {
+            // execute it somehow
+            // maybe match and based on type (ALU, FPU, SFU, Memory), do something
+            // memory stuff would prob require and output that is intercepted by the ShaderCluster?
+            Arithmetic(a) => match a {
+                // would algebraic effects help here?
+                // maybe a then?
+                Signed => ...
+                Unsigned => ...
+                then {
+                    
+                }
+            }
+            Memory(addr) => match addr {
+                Load(addr) => ...
+                Store(addr)
+            }
+        }
+    )
+}
 
 // DecodedInstruction: PPUInstruction
 
@@ -127,3 +163,5 @@ ShaderProcessor: () {}
 // wait no so you basically connect everything all at once in a shader cluster fn and a ppu module fn
 
 // so how does this even work next?
+
+// maybe lang server reloads as you save or at every 10s I think? Or adaptive based on how fast your typing and how much your changing?
