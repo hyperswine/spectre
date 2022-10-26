@@ -5,6 +5,9 @@
 // the tihng with hardware descriptions is that you should deal directly with hardware
 // and declaratively...
 
+// is there a read, write and control line?
+// maybe a single line with request type 0/1 as the first bit?
+
 FullAdder: (bit1: Bit, bit2: Bit, carry: Bit) -> (Sum, Carry) {
     let p1 = bit1 ^ bit2
     let sum = p1 ^ carry
@@ -52,6 +55,8 @@ Data: u64
 Address: u64
 DataFetch: Address -> Data
 
+SpectreInstruction: enum => CInstruction | PInstruction
+
 // all base instructions operate on 64 bits of data
 Instruction: enum {
     Add: (Data, Data)
@@ -72,8 +77,34 @@ Instruction: enum {
     }
 }
 
+const N_EXECUTORS = 128
+
+ComplexQueue: (function: Fn) {
+    // FIFO definition
+    mut queue = CircularBuffer[Fn; N]()
+
+    // executors held here?
+    mut executors = [Executor; N_EXECUTORS]
+
+    // choose the next in line
+    let f = queue.pop()
+
+    // choose a free executor (from executor stack)
+    let free_executor = executors.pop()
+    free_executor(f)
+
+    // push function to queue
+    queue.push(function)
+}
+
+// communicates with the function wait list? and/or the shared cache?
+ExecutorComplex: (function: Fn) -> Fn?, CacheRequest? {
+    // schedule the fn!!!!!!!
+    ComplexQueue(function)
+}
 
 // executor can send data back to fn buffer as Result for IO (effects)
+// a fn is an affine type
 Executor: (function: Fn) -> Fn? {
     let lhs = function.sp()
     let instruction = function.next_instruction()
