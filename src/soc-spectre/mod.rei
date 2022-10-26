@@ -2,28 +2,58 @@
     Spectre ISA
 *#
 
-Adder: (data1: u64, data2: u64) {
-    // full adder does a bitwise addition
-    addr1 + addr2
+// the tihng with hardware descriptions is that you should deal directly with hardware
+// and declaratively...
+
+FullAdder: (bit1: Bit, bit2: Bit, carry: Bit) -> (Sum, Carry) {
+    let p1 = bit1 ^ bit2
+    let sum = p1 ^ carry
+    let p3 = carry & p1
+    let p4 = bit1 & bit2
+    let carry_out = p3 | p4 
+
+    sum, carry_out
 }
 
-// executor can send data back to fn buffer as Result
-Executor: (instruction: Instruction) -> Fn? {
-    // decode the instruction and send to the corresponding subcomponents
-    match instruction {
-        Add(addr1, addr2) => Adder(addr1, addr2)
+Sum: Bits
+Carry: Bits
+
+RippleAdder[N]: (data1: Bits[N], data2: Bits[N], carry_in: Carry) -> (Sum[N], Carry) {
+    map(data1, data2).map(d1, d2, index => {
+        FullAdder(data1[index], data2[index], carry_in)
+    })
+
+    // maybe uhh connect them all?
+    // somehow use dependent data types?
+    let adder = (x, y, carry) => FullAdder(x, y, carry)
+    let adders = [adder; N]
+
+    // "sequential in a way"... wait cant they basically be like 2 cycles? or just one?
+    // so the clock doesnt step in this case?
+    mut carry = carry_in
+    mut sum = Sum[N]()
+
+    for i in 0..N {
+        let _sum, _carry = FullAdder(data1[index], data2[index], carry)
+        carry = _carry
+        // on an empty array or array with default values, append
+        // replaces the data and increments size
+        sum.append(_sum) 
     }
+
+    sum, carry
 }
 
 Instruction: {
     fn_id: Id
 }
 
-// so just some address
 Data: u64
+Address: u64
+DataFetch: Address -> Data
 
 // all base instructions operate on 64 bits of data
-Instruction: {
+Instruction: enum {
     Add: (Data, Data)
     Sub: (Data, Data)
     Mult: (Data, Data)
@@ -42,6 +72,21 @@ Instruction: {
     }
 }
 
+
+// executor can send data back to fn buffer as Result for IO (effects)
+Executor: (function: Fn) -> Fn? {
+    let lhs = function.sp()
+    let instruction = function.next_instruction()
+
+    // would fetch from cache and go into the adder. If not in cache, stall until data arrives
+    // only DRAM is a "part" of the cpu complex... other devices are treated as IO
+    let fetch = (addr) => Cache(addr)
+
+    match instruction {
+        Add(rhs) => lhs + fetch(rhs)
+    }
+}
+
 // the thing is:
 // its only an addr to the actual data in cache right?
 // cache data is like tagged with fn id though?
@@ -50,37 +95,6 @@ Instruction: {
 // an executor uhh, takes in a function's ID and stackframe address?
 // so ID, SP...?
 // then it just works
-
-Address: u64
-
-DataFetch: Address -> Data
-
-Executor: (function: Fn) {
-    let lhs = function.sp()
-    let instruction = function.next_instruction()
-
-    // decoder part 1
-    // take the addresses that it refers to? or offsets?
-    // let ins_type: DataFetch = match instruction {
-    //     OffsetInstruction => (offset) => Cache(Offset(offset))
-    //     AddressableInstruction => (offset) => Cache(Address(address))
-    // }
-
-    let fetch = (addr) => Cache(addr)
-
-    match instruction {
-        Add(rhs) => lhs + fetch(rhs)
-    }
-
-    // ins_type is a function that tells the executor to contact the cache for the data
-
-    // decoder part 2
-    // match instruction {
-        // would fetch from cache and go into the adder. If not in cache, stall until data arrives
-        // only DRAM is a "part" of the cpu complex... other devices are treated as IO
-    //     Add(rhs) => lhs + ins_type(rhs)
-    // }
-}
 
 /*
 how are things compiled?
