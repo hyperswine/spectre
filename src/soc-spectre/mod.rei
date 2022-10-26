@@ -2,6 +2,12 @@
     Spectre ISA
 *#
 
+/*
+spectro defines the lowering logic for gates:
+&, |, ^ -> n input, one output
+~
+*/
+
 // the tihng with hardware descriptions is that you should deal directly with hardware
 // and declaratively...
 
@@ -60,7 +66,7 @@ Instruction: enum {
     Div: (Data, Data)
     Bitwise: (Data, Data)
 
-    Jump: Offset
+    Jump: enum => Offset | Address
     Yield
 
     // accelerator
