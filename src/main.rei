@@ -3,11 +3,9 @@
 use std::cli::Flag
 
 main: (cli_mode: Flag) -> Status {
-    if cli_mode {
-        // launch interactive prompt
-        interactive_prompt()
-    }
-    else {
-        gui()
-    }
+    // launch interactive prompt
+    if cli_mode => interactive_prompt()
+    else => gui()
+
+    Ok()
 }

@@ -4,9 +4,7 @@
 
 // I mean, you dont even need a command processor then?
 // the shader does its job the moment you send it in?
-
 // Hardware description (descriptive?)
-
 // new should be auto derived, if you dont want it, do @derive(new = false, ...)
 
 use std::spectro
@@ -156,12 +154,8 @@ ShaderProcessor: (wavefront: Wavefront) {
 // DecodedInstruction: PPUInstruction
 
 // the problem with "Decode" is that it is already kind of decoded in the code
-
 # local per-shader cluster decoder -> ALU input?
 // Decode: (wavefront: Wavefront) {}
-
 // wait no so you basically connect everything all at once in a shader cluster fn and a ppu module fn
-
 // so how does this even work next?
-
 // maybe lang server reloads as you save or at every 10s I think? Or adaptive based on how fast your typing and how much your changing?

@@ -4,23 +4,17 @@
 
 use rocket_core::prelude::*
 
-// note extend {} doesnt mean extend the base object, thats just {} itself
-// extend {} actually means extend Self {}
+// NOTE: extend {} doesnt mean extend the base object, thats just {} itself. Extend {} actually means extend Self {}
 
 Core: extend RocketCore {
-    // all ALU instructions already implemented
-    // Caches kinda
+    // All ALU instructions already implemented. Caches kinda
 
     connect: (&mut self, ddr_line: DDRLine) {
         // connect self to it, the first part of the pipeline
         self.pipeline.connect(ddr_line)
-
-
     }
 
-    pipeline: (&mut self) {
-
-    }
+    pipeline: (&mut self) {}
 
     // connect core to a NUMA domain RAM
 
@@ -28,9 +22,7 @@ Core: extend RocketCore {
 }
 
 // uarch
-
 // interrupts and such!
-
 // wait...
 
 Core[NAlu, NDecode]: (memory_line: MemoryLine, instructions: [Instruction; NDecode], alu: [RocketAlu; NAlu]) {

@@ -14,7 +14,7 @@ spectro defines the lowering logic for gates:
 // is there a read, write and control line?
 // maybe a single line with request type 0/1 as the first bit?
 
-FullAdder: (bit1: Bit, bit2: Bit, carry: Bit) -> (Sum, Carry) {
+FullAdder: (bit1: Bit, bit2: Bit, carry: Bit) -> Sum, Carry {
     let p1 = bit1 ^ bit2
     let sum = p1 ^ carry
     let p3 = carry & p1
@@ -27,10 +27,8 @@ FullAdder: (bit1: Bit, bit2: Bit, carry: Bit) -> (Sum, Carry) {
 Sum: Bits
 Carry: Bits
 
-RippleAdder[N]: (data1: Bits[N], data2: Bits[N], carry_in: Carry) -> (Sum[N], Carry) {
-    map(data1, data2).map(d1, d2, index => {
-        FullAdder(data1[index], data2[index], carry_in)
-    })
+RippleAdder[N]: (data1: Bits[N], data2: Bits[N], carry_in: Carry) -> Sum[N], Carry {
+    map(data1, data2).map(d1, d2, index => FullAdder(data1[index], data2[index], carry_in))
 
     // maybe uhh connect them all?
     // somehow use dependent data types?
@@ -61,18 +59,25 @@ Data: u64
 Address: u64
 DataFetch: Address -> Data
 
-SpectreInstruction: enum => CInstruction | PInstruction
+SpectreInstruction: CInstruction | PInstruction
+
+Operand: Data | Addr
 
 // all base instructions operate on 64 bits of data
 Instruction: enum {
-    Add: (Data, Data)
-    Sub: (Data, Data)
-    Mult: (Data, Data)
-    Div: (Data, Data)
-    Bitwise: (Data, Data)
+    // Only one of the operands can be an immediate
+    // the other must be an Addr. Or both addrs. Maybe just make immediate the 2nd one always
+    Add: (Addr, Operand)
+    Sub: (Addr, Operand)
+    Mult: (Addr, Operand)
+    Div: (Addr, Operand)
+    Bitwise: (Addr, Operand)
 
-    Jump: enum => Offset | Address
+    Jump: Offset | Address
     Yield
+
+    Copy
+    Store
 
     // accelerator
     Accelerate: enum {
@@ -83,7 +88,7 @@ Instruction: enum {
     }
 }
 
-const N_EXECUTORS = 128
+N_EXECUTORS: 128
 
 ComplexQueue: (function: Fn) {
     // FIFO definition

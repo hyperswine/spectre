@@ -20,9 +20,7 @@ Functionality: ()
 
 Functionality: impl {
     // the new snippet can generate this
-    new: () -> Self {
-        ()
-    }
+    new: () -> Self => _
 
     execute_program: (hardware_program: HardwareProgram) {
         // interpret the program in your own ISA/ucode
